@@ -41,35 +41,38 @@ Database (PostgreSQL / H2)
 ---
 
 ## 📁 Структура проекта
+
+```
 my-blog-back-app/
 │
 ├── src/
-│ ├── main/
-│ │ ├── java/
-│ │ │ └── com/example/blog/
-│ │ │ ├── controller/
-│ │ │ ├── service/
-│ │ │ ├── dao/
-│ │ │ ├── model/
-│ │ │ └── config/
-│ │ │
-│ │ ├── resources/
-│ │ │ ├── schema.sql
-│ │ │ └── application.properties
-│ │ │
-│ │ └── webapp/
-│ │ └── WEB-INF/
-│ │ └── web.xml
-│ │
-│ └── test/
-│ └── java/
-│ └── com/example/blog/
-│ ├── service/
-│ ├── dao/
-│ └── controller/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/example/blog/
+│   │   │       ├── controller/
+│   │   │       ├── service/
+│   │   │       ├── dao/
+│   │   │       ├── model/
+│   │   │       └── config/
+│   │   │
+│   │   ├── resources/
+│   │   │   ├── schema.sql
+│   │   │   └── application.properties
+│   │   │
+│   │   └── webapp/
+│   │       └── WEB-INF/
+│   │           └── web.xml
+│   │
+│   └── test/
+│       └── java/
+│           └── com/example/blog/
+│               ├── service/
+│               ├── dao/
+│               └── controller/
 │
 ├── pom.xml / build.gradle
 └── README.md
+```
 
 
 ---
