@@ -1,142 +1,194 @@
 # My Blog Backend Application
 
-Бэкенд веб-приложения блога, реализованный на Java с использованием Spring Framework 6 без Spring Boot.  
-Приложение предоставляет REST API для управления постами, комментариями, лайками и изображениями и интегрируется с React-фронтендом.
+Бэкенд веб-приложения блога, реализованный на **Java 21** с использованием **Spring Framework 6 (без Spring Boot)**.
+Приложение предоставляет **REST API** для управления постами, комментариями, лайками и изображениями и интегрируется с React-frontend.
 
-## 📌 Описание проекта
+---
+
+# 📌 Описание проекта
 
 Приложение состоит из трёх компонентов:
 
-- **Frontend** — React-приложение, работающее через Nginx (Docker)
-- **Backend** — Spring Framework приложение, работающее в servlet-container (Tomcat / Jetty)
-- **Database** — база данных для хранения постов и комментариев (PostgreSQL / H2)
+* **Frontend** — React + Nginx (Docker)
+* **Backend** — Spring Framework (WAR deployment, Tomcat / Jetty)
+* **Database** — PostgreSQL или H2
 
-Архитектура:
+---
 
+# 🏗 Архитектура системы
+
+```
 Browser
-↓
-Frontend (React + Nginx) http://localhost:80
-
-↓ REST API
-Backend (Spring Framework) http://localhost:8080
-
-↓ JDBC
+   │
+   ▼
+Frontend (React + Nginx)
+http://localhost
+   │
+   │ REST API
+   ▼
+Backend (Spring Framework)
+http://localhost:8080
+   │
+   │ JDBC
+   ▼
 Database (PostgreSQL / H2)
+```
 
 ---
 
-## 🛠 Используемые технологии
+# 🛠 Используемые технологии
 
-- Java 21
-- Spring Framework 6 (Core, Web, JDBC, Test)
-- Spring Test Framework
-- Maven / Gradle
-- Servlet API
-- Tomcat / Jetty
-- PostgreSQL или H2
-- JUnit 5
-- Docker / Docker Compose
-- Nginx
-- Lombok (опционально)
+## Core
+
+* Java 21
+* Spring Framework 6
+
+  * Spring Core
+  * Spring Web (Spring MVC)
+  * Spring JDBC
+  * Spring Test
+
+## Build tools
+
+* Maven или Gradle
+
+## Server
+
+* Tomcat или Jetty
+* Servlet API
+
+## Database
+
+* PostgreSQL
+* H2 (для тестов)
+
+## Testing
+
+* JUnit 5
+* Spring Test
+* Mockito (опционально)
+* MockMvc
+
+## DevOps
+
+* Docker
+* Docker Compose
+* Nginx
+
+## Optional
+
+* Lombok
 
 ---
 
-## 📁 Структура проекта
+# 📁 Структура проекта
 
 ```
 my-blog-back-app/
 │
 ├── src/
 │   ├── main/
-│   │   ├── java/
-│   │   │   └── com/example/blog/
-│   │   │       ├── controller/
-│   │   │       ├── service/
-│   │   │       ├── dao/
-│   │   │       ├── model/
-│   │   │       └── config/
+│   │   ├── java/com/example/blog/
+│   │   │   ├── controller/
+│   │   │   ├── service/
+│   │   │   ├── dao/
+│   │   │   ├── model/
+│   │   │   └── config/
 │   │   │
 │   │   ├── resources/
 │   │   │   ├── schema.sql
 │   │   │   └── application.properties
 │   │   │
-│   │   └── webapp/
-│   │       └── WEB-INF/
-│   │           └── web.xml
+│   │   └── webapp/WEB-INF/
+│   │       └── web.xml
 │   │
-│   └── test/
-│       └── java/
-│           └── com/example/blog/
-│               ├── service/
-│               ├── dao/
-│               └── controller/
+│   └── test/java/com/example/blog/
+│       ├── controller/
+│       ├── service/
+│       └── dao/
 │
 ├── pom.xml / build.gradle
 └── README.md
 ```
 
+---
+
+# 🧱 Архитектура backend
+
+Используется классическая **многоуровневая архитектура**.
 
 ---
 
-## 🧱 Архитектура backend
+## Controller Layer
 
-Приложение реализовано согласно многоуровневой архитектуре:
-
-### Controller Layer
-Обрабатывает HTTP запросы и возвращает JSON ответы.
+Обрабатывает HTTP-запросы и возвращает JSON.
 
 Примеры:
-GET /api/posts
-POST /api/posts
-PUT /api/posts/{id}
-DELETE /api/posts/{id}
 
+```
+GET    /api/posts
+POST   /api/posts
+PUT    /api/posts/{id}
+DELETE /api/posts/{id}
+```
+
+Ответственность:
+
+* обработка HTTP запросов
+* валидация входных данных
+* возврат JSON
 
 ---
 
-### Service Layer
+## Service Layer
+
 Содержит бизнес-логику:
 
-- создание поста
-- редактирование
-- фильтрация
-- управление лайками
-- управление комментариями
+* создание постов
+* редактирование
+* фильтрация
+* управление лайками
+* управление комментариями
 
 ---
 
-### DAO Layer
+## DAO Layer
+
 Работает с базой данных через JDBC.
 
 Отвечает за:
 
-- CRUD операции
-- SQL запросы
-- маппинг ResultSet → Model
+* CRUD операции
+* SQL запросы
+* mapping ResultSet → Model
 
 ---
 
-### Model Layer
+## Model Layer
 
 Основные сущности:
 
-Post
+### Post
+
+```
 id
 title
 text
 tags
 likesCount
-Comment
+```
+
+### Comment
+
+```
 id
 text
 postId
-
+```
 
 ---
 
-## 🗄 Структура базы данных
-
-Пример:
+# 🗄 Структура базы данных
 
 ```sql
 CREATE TABLE posts (
@@ -161,112 +213,197 @@ CREATE TABLE post_tags (
     post_id BIGINT REFERENCES posts(id) ON DELETE CASCADE,
     tag_id BIGINT REFERENCES tags(id) ON DELETE CASCADE
 );
+```
 
-▶️ Запуск frontend
+---
+
+# ▶️ Запуск frontend
 
 Перейдите в директорию frontend:
+
+```bash
 cd frontend
+```
 
 Запустите:
+
+```bash
 docker compose up -d
+```
 
 Проверьте:
+
+```bash
 docker ps
+```
 
 Frontend будет доступен:
+
+```
 http://localhost
+```
 
-▶️ Сборка backend
+---
+
+# ▶️ Сборка backend
+
+```bash
 mvn clean package
+```
 
-После сборки будет создан:
+После сборки появится:
+
+```
 target/my-blog-back-app.war
+```
 
-▶️ Запуск backend (Tomcat)
+---
 
-Скопируйте war файл в:
+# ▶️ Запуск backend (Tomcat)
+
+Скопируйте WAR файл:
+
+```
 TOMCAT_HOME/webapps/
+```
 
 Запустите Tomcat:
+
+```bash
 TOMCAT_HOME/bin/startup.sh
+```
 
 Backend будет доступен:
+
+```
 http://localhost:8080
+```
 
-🧪 Запуск тестов
+---
+
+# 🧪 Запуск тестов
+
+```bash
 mvn test
+```
 
-📡 REST API
-Получение списка постов
+---
+
+# 📡 REST API
+
+## Получение постов
+
+```
 GET /api/posts?search=text&pageNumber=1&pageSize=5
+```
+
 Ответ:
+
+```json
 {
   "posts": [],
   "hasPrev": false,
   "hasNext": true,
   "lastPage": 5
 }
+```
 
-Создание поста
+---
+
+## Создание поста
+
+```
 POST /api/posts
+```
+
+```json
 {
   "title": "Post title",
   "text": "Post text",
   "tags": ["spring", "java"]
 }
+```
 
-Лайк поста
+---
+
+## Лайк поста
+
+```
 POST /api/posts/{id}/likes
+```
 
-Комментарии
-GET    /api/posts/{id}/comments
-POST   /api/posts/{id}/comments
-PUT    /api/posts/{id}/comments/{commentId}
-DELETE /api/posts/{id}/comments/{commentId}
+---
 
-🧪 Тестирование
+## Комментарии
 
-Проект содержит:
-Unit tests
+```
+GET     /api/posts/{id}/comments
+POST    /api/posts/{id}/comments
+PUT     /api/posts/{id}/comments/{commentId}
+DELETE  /api/posts/{id}/comments/{commentId}
+```
 
-Тестируют:
-Service layer
-Business logic
+---
 
-Используют:
-JUnit 5
-Spring Test
-Mockito (опционально)
+# 🧪 Тестирование
 
-Integration tests
+## Unit tests
 
 Тестируют:
-Controller
-DAO
-Database integration
+
+* Service layer
+* business logic
 
 Используют:
-Spring TestContext Framework
-Embedded H2 Database
-MockMvc
 
-🧩 Особенности реализации
+* JUnit 5
+* Spring Test
+* Mockito
 
-Без использования Spring Boot
-WAR deployment
-Java-based Spring configuration
-REST API
-Pagination
-Filtering by tags and title
-Image upload support
-Integration tests
-Context caching
+---
 
-🧑‍💻 Git workflow
+## Integration tests
+
+Тестируют:
+
+* Controller
+* DAO
+* database integration
+
+Используют:
+
+* Spring TestContext Framework
+* H2 Database
+* MockMvc
+
+---
+
+# 🧩 Особенности реализации
+
+* Без Spring Boot
+* WAR deployment
+* Java-based configuration
+* REST API
+* Pagination
+* Filtering
+* Tag support
+* Image upload
+* Integration tests
+* Context caching
+
+---
+
+# 🧑‍💻 Git workflow
+
 Используется GitFlow:
 
+```
 main
- └── feature
+ └── feature/*
+```
 
- Рабочий процесс:
- feature → commit → push → pull request → review → merge
+Workflow:
+
+```
+feature → commit → push → pull request → review → merge
+```
