@@ -12,6 +12,7 @@
 - **Database** — база данных для хранения постов и комментариев (PostgreSQL / H2)
 
 Архитектура:
+
 Browser
 ↓
 Frontend (React + Nginx) http://localhost:80
