@@ -88,12 +88,12 @@ my-blog-back-app/
 │
 ├── src/
 │   ├── main/
-│   │   ├── java/com/example/blog/
+│   │   ├── java/ru/yandex/practicum/blog/
+│   │   │   ├── configuration/
 │   │   │   ├── controller/
-│   │   │   ├── service/
-│   │   │   ├── dao/
 │   │   │   ├── model/
-│   │   │   └── config/
+│   │   │   ├── repository/
+│   │   │   └── service/
 │   │   │
 │   │   ├── resources/
 │   │   │   ├── schema.sql
