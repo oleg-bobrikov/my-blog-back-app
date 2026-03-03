@@ -1,10 +1,12 @@
 package ru.yandex.practicum.blog.model;
 
 import lombok.Builder;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.List;
 
 @Builder
+@Jacksonized
 public record Post(
         Long id,
         String title,
