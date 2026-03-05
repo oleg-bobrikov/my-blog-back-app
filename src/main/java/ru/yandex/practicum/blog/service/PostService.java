@@ -24,9 +24,9 @@ public class PostService {
         return repository.save(truncatedPost);
     }
 
-    public void update(Post post) {
+    public Post update(Post post) {
         Post truncatedPost = truncatePostText(post);
-        repository.update(truncatedPost);
+        return repository.update(truncatedPost);
     }
 
     private Post truncatePostText(Post post) {
@@ -54,7 +54,7 @@ public class PostService {
     }
 
     public Page<Post> findPosts(String search, Pageable pageable) {
-        return repository.findPosts(search, pageable.getPageNumber(), pageable.getPageSize());
+        return repository.findPosts(search, pageable);
     }
 
     public Post like(Long postId) {

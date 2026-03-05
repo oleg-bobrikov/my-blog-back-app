@@ -1,0 +1,1102 @@
+{
+  "info": {
+    "_postman_id": "226f8c41-646b-414b-bfba-9a82f5e6a591",
+    "name": "my blog back app",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "11570135"
+  },
+  "item": [
+    {
+      "name": "add post1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = pm.response.json()\r",
+              "pm.environment.set(\"post1_id\", response.id)"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "  {\r\n    \"title\": \"Название поста 1\",\r\n    \"text\": \"Текст поста в формате Markdown...\",\r\n    \"tags\": [\"Яндекс\", \"ПроектнаяРабота\"]\r\n  }\r\n  ",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get post1",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "update post1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": {{post1_id}},\r\n    \"title\": \"Обучение\",\r\n    \"text\": \"Пост № {{post1_id}}\",\r\n    \"tags\": [\r\n        \"Яндекс\",\r\n        \"ПроектнаяРабота\",\r\n        \"{{post1_id}}\"\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "like post1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}/likes",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}",
+            "likes"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "set post1 image",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "image",
+              "type": "file",
+              "uuid": "e0f31561-8b2c-4851-a823-aab163be5161",
+              "src": "пост 3.png"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}/image",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}",
+            "image"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get post1 image",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}/image",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}",
+            "image"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "add comment1 for post1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = pm.response.json()\r",
+              "pm.environment.set(\"post1_comment1_id\", response.id)"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "  {\r\n    \"text\": \"Первый комментарий\",\r\n    \"post_Id\": \"{{post1_id}}\"\r\n  }\r\n  ",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}/comments",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}",
+            "comments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "add comment2 for post1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = pm.response.json()\r",
+              "pm.environment.set(\"post1_comment2_id\", response.id)"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "  {\r\n    \"text\": \"Второй комментарий\",\r\n    \"post_Id\": \"{{post1_id}}\"\r\n  }\r\n  ",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}/comments",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}",
+            "comments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get post1 comments",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "    pm.response.to.be.withBody;\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "const target = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Поле posts является массивом\", function () {\r",
+              "    pm.expect(target).to.be.an(\"array\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Каждый комментарий содержит корректную структуру\", function () {\r",
+              "    target.forEach(comment => {\r",
+              "        pm.expect(comment).to.have.property(\"id\");\r",
+              "        pm.expect(comment).to.have.property(\"postId\");\r",
+              "        pm.expect(comment).to.have.property(\"text\");\r",
+              "\r",
+              "        pm.expect(comment.id).to.be.a(\"number\");\r",
+              "        pm.expect(comment.postId).to.be.a(\"number\");\r",
+              "        pm.expect(comment.text).to.be.a(\"string\");\r",
+              "    });\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Размер списка комментариев содержит 2 элемента\", function () {\r",
+              "    const target = pm.response.json();\r",
+              "    pm.expect(target).to.have.lengthOf(2);\r",
+              "});\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}/comments",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}",
+            "comments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get post1 comment1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}/comments/{{post1_comment1_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}",
+            "comments",
+            "{{post1_comment1_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "update post1 comment1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": {{post1_comment1_id}},\r\n    \"text\": \"Обновленный комментарий {{post1_comment1_id}} к посту {{post1_id}}\",\r\n    \"postId\":{{post1_id}}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}/comments/{{post1_comment1_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}",
+            "comments",
+            "{{post1_comment1_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "add post2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = pm.response.json()\r",
+              "pm.environment.set(\"post2_id\", response.id)"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "  {\r\n    \"title\": \"Название поста 2\",\r\n    \"text\": \"Текст поста в формате Markdown...\",\r\n    \"tags\": [\"Яндекс\", \"Хобби\", \"Лыжи\"]\r\n  }\r\n  ",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "update post2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": {{post2_id}},\r\n    \"title\": \"Спорт\",\r\n    \"text\": \"Пост № {{post1_id}}\",\r\n    \"tags\": [\r\n        \"Яндекс\",\r\n        \"Хобби\",\r\n        \"Лыжи\",\r\n        \"{{post1_id}}\"\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts/19",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "19"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "search posts by #Яндекс",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "    pm.response.to.be.withBody;\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "const target = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Ответ содержит основные поля\", function () {\r",
+              "    pm.expect(target).to.have.property(\"posts\");\r",
+              "    pm.expect(target).to.have.property(\"hasPrev\");\r",
+              "    pm.expect(target).to.have.property(\"hasNext\");\r",
+              "    pm.expect(target).to.have.property(\"lastPage\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Поле posts является массивом\", function () {\r",
+              "    pm.expect(target.posts).to.be.an(\"array\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Каждый пост содержит корректную структуру\", function () {\r",
+              "    target.posts.forEach(post => {\r",
+              "        pm.expect(post).to.have.property(\"id\");\r",
+              "        pm.expect(post).to.have.property(\"title\");\r",
+              "        pm.expect(post).to.have.property(\"text\");\r",
+              "        pm.expect(post).to.have.property(\"tags\");\r",
+              "        pm.expect(post).to.have.property(\"likesCount\");\r",
+              "        pm.expect(post).to.have.property(\"commentsCount\");\r",
+              "\r",
+              "        pm.expect(post.id).to.be.a(\"number\");\r",
+              "        pm.expect(post.title).to.be.a(\"string\");\r",
+              "        pm.expect(post.text).to.be.a(\"string\");\r",
+              "        pm.expect(post.tags).to.be.an(\"array\");\r",
+              "        pm.expect(post.likesCount).to.be.a(\"number\");\r",
+              "        pm.expect(post.commentsCount).to.be.a(\"number\");\r",
+              "    });\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Поля пагинации имеют правильный тип\", function () {\r",
+              "    pm.expect(target.hasPrev).to.be.a(\"boolean\");\r",
+              "    pm.expect(target.hasNext).to.be.a(\"boolean\");\r",
+              "    pm.expect(target.lastPage).to.be.a(\"number\");\r",
+              "});\r",
+              "\r",
+              "pm.test('Каждый пост содержит тег \"Яндекс\"', function () {\r",
+              "    const target = pm.response.json();\r",
+              "\r",
+              "    target.posts.forEach(post => {\r",
+              "        pm.expect(post.tags).to.include(\"Яндекс\");\r",
+              "    });\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Размер списка постов содержит 2 элемента\", function () {\r",
+              "    const target = pm.response.json();\r",
+              "    pm.expect(target.posts).to.have.lengthOf(2);\r",
+              "});\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/posts?search=%23Яндекс%23{{post1_id}}&pageNumber=1&pageSize=5",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts"
+          ],
+          "query": [
+            {
+              "key": "search",
+              "value": "%23Яндекс%23{{post1_id}}"
+            },
+            {
+              "key": "pageNumber",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "search posts by #Яндекс Спорт",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "    pm.response.to.be.withBody;\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "const target = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Ответ содержит основные поля\", function () {\r",
+              "    pm.expect(target).to.have.property(\"posts\");\r",
+              "    pm.expect(target).to.have.property(\"hasPrev\");\r",
+              "    pm.expect(target).to.have.property(\"hasNext\");\r",
+              "    pm.expect(target).to.have.property(\"lastPage\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Поле posts является массивом\", function () {\r",
+              "    pm.expect(target.posts).to.be.an(\"array\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Каждый пост содержит корректную структуру\", function () {\r",
+              "    target.posts.forEach(post => {\r",
+              "        pm.expect(post).to.have.property(\"id\");\r",
+              "        pm.expect(post).to.have.property(\"title\");\r",
+              "        pm.expect(post).to.have.property(\"text\");\r",
+              "        pm.expect(post).to.have.property(\"tags\");\r",
+              "        pm.expect(post).to.have.property(\"likesCount\");\r",
+              "        pm.expect(post).to.have.property(\"commentsCount\");\r",
+              "\r",
+              "        pm.expect(post.id).to.be.a(\"number\");\r",
+              "        pm.expect(post.title).to.be.a(\"string\");\r",
+              "        pm.expect(post.text).to.be.a(\"string\");\r",
+              "        pm.expect(post.tags).to.be.an(\"array\");\r",
+              "        pm.expect(post.likesCount).to.be.a(\"number\");\r",
+              "        pm.expect(post.commentsCount).to.be.a(\"number\");\r",
+              "    });\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Поля пагинации имеют правильный тип\", function () {\r",
+              "    pm.expect(target.hasPrev).to.be.a(\"boolean\");\r",
+              "    pm.expect(target.hasNext).to.be.a(\"boolean\");\r",
+              "    pm.expect(target.lastPage).to.be.a(\"number\");\r",
+              "});\r",
+              "\r",
+              "pm.test('Каждый пост содержит тег \"Яндекс\"', function () {\r",
+              "    const target = pm.response.json();\r",
+              "\r",
+              "    target.posts.forEach(post => {\r",
+              "        pm.expect(post.tags).to.include(\"Яндекс\");\r",
+              "    });\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Размер списка постов содержит 1 элемент\", function () {\r",
+              "    const target = pm.response.json();\r",
+              "    pm.expect(target.posts).to.have.lengthOf(1);\r",
+              "});\r",
+              "\r",
+              "pm.test('Есть пост с названием \"Спорт\"', function () {\r",
+              "    const titles = pm.response.json().posts.map(p => p.title);\r",
+              "    pm.expect(titles).to.includes(\"Спорт\");\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/posts?search=%23Яндекс%23{{post1_id}}%20Спорт&pageNumber=1&pageSize=5",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts"
+          ],
+          "query": [
+            {
+              "key": "search",
+              "value": "%23Яндекс%23{{post1_id}}%20Спорт"
+            },
+            {
+              "key": "pageNumber",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete post1 comment1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}/comments/{{post1_comment1_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}",
+            "comments",
+            "{{post1_comment1_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete post1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Ответ должен содержать код статуса 200\", function () {\r",
+              "    pm.response.to.have.status(\"OK\");\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get post1 has status Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Ответ должен содержать код статуса 404\", function () {\r",
+              "    pm.response.to.have.status(\"Not Found\");\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post1_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post1_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete post2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Ответ должен содержать код статуса 200\", function () {\r",
+              "    pm.response.to.have.status(\"OK\");\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post2_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post2_id}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}

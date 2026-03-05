@@ -2,7 +2,7 @@ package ru.yandex.practicum.blog.repository.impl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,19 +16,30 @@ import ru.yandex.practicum.blog.repository.PostRepository;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import java.sql.Array;
+import java.sql.SQLException;
 import java.util.*;
 
 @Repository
 public class PostRepositoryJdbc implements PostRepository {
     private final NamedParameterJdbcTemplate jdbc;
-    private final RowMapper<Post> postRowMapper = (rs, rowNum) -> Post.builder()
-            .id(rs.getLong("id"))
-            .title(rs.getString("title"))
-            .text(rs.getString("text"))
-            .tags(Arrays.asList((String[]) rs.getArray("tags").getArray()))
-            .likesCount(rs.getInt("likes_count"))
-            .commentsCount(rs.getInt("comments_count"))
-            .build();
+    private final RowMapper<Post> postRowMapper = (rs, rowNum) -> {
+        Post.PostBuilder builder = Post.builder()
+                .id(rs.getLong("id"))
+                .title(rs.getString("title"))
+                .text(rs.getString("text"))
+                .likesCount(rs.getInt("likes_count"))
+                .commentsCount(rs.getInt("comments_count"));
+
+        try {
+            Array tagsArray = rs.getArray("tags");
+            if (tagsArray != null) {
+                builder.tags(Arrays.asList((String[]) tagsArray.getArray()));
+            }
+        } catch (SQLException ignored) {
+        }
+        return builder.build();
+    };
     private final RowMapper<Image> imageRowMapper = (rs, rowNum) -> new Image(
             rs.getLong("post_id"),
             rs.getBytes("data")
@@ -79,7 +90,7 @@ public class PostRepositoryJdbc implements PostRepository {
     }
 
     @Override
-    public void update(Post post) {
+    public Post update(Post post) {
         String sql = "UPDATE posts SET title = :title, text = :text WHERE id = :id";
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("title", post.title())
@@ -93,6 +104,8 @@ public class PostRepositoryJdbc implements PostRepository {
         if (post.tags() != null && !post.tags().isEmpty()) {
             saveTags(post.id(), post.tags());
         }
+
+        return findById(post.id());
     }
 
     @Override
@@ -129,74 +142,84 @@ public class PostRepositoryJdbc implements PostRepository {
     }
 
     @Override
-    public Page<Post> findPosts(String search, int pageNumber, int pageSize) {
+    public Page<Post> findPosts(String search, Pageable pageable) {
 
         Set<String> tags = new HashSet<>();
         List<String> titleWords = new ArrayList<>();
 
         for (String word : search.split("\\s+")) {
+            if (word.isBlank()) continue;
             if (word.startsWith("#")) {
-                tags.add(word.substring(1));
-            } else if (!word.isBlank()) {
+                for (String tag : word.split("#")) {
+                    if (!tag.isBlank()) {
+                        tags.add(tag);
+                    }
+                }
+            } else {
                 titleWords.add(word);
             }
         }
 
         String titleSearch = String.join(" ", titleWords);
 
-        StringBuilder where = new StringBuilder(" WHERE 1=1 ");
+        String fromSql = """
+                FROM posts
+                WHERE 1=1
+                """;
         MapSqlParameterSource params = new MapSqlParameterSource();
 
         if (!titleSearch.isBlank()) {
-            where.append(" AND posts.title ILIKE :title");
+            fromSql += " AND posts.title ILIKE :title";
             params.addValue("title", "%" + titleSearch + "%");
         }
 
         if (!tags.isEmpty()) {
-            where.append(" AND tags.name IN (:tags)");
+            fromSql += """
+                     AND EXISTS (
+                        SELECT 1 FROM post_tags pt
+                        JOIN tags t ON pt.tag_id = t.id
+                        WHERE pt.post_id = posts.id AND t.name IN (:tags)
+                        HAVING COUNT(DISTINCT t.name) = :tagCount
+                    )
+                    """;
             params.addValue("tags", tags);
-        }
-
-        String fromSql = """
-            FROM posts
-            LEFT JOIN post_tags ON posts.id = post_tags.post_id
-            LEFT JOIN tags ON post_tags.tag_id = tags.id
-            """ + where + """
-            GROUP BY posts.id
-            """;
-
-        if (!tags.isEmpty()) {
-            fromSql += " HAVING COUNT(DISTINCT tags.name) = :tagCount";
             params.addValue("tagCount", tags.size());
         }
 
-        String selectSql = """
-            SELECT
-                posts.id,
-                posts.title,
-                posts.text,
-                posts.likes_count,
-                posts.comments_count,
-                COALESCE(
-                    array_agg(DISTINCT tags.name)
-                    FILTER (WHERE tags.name IS NOT NULL),
-                    '{}'
-                ) AS tags
-            """ + fromSql;
-
-        String countSql = "SELECT COUNT(*) FROM (SELECT posts.id " + fromSql + ") AS total";
-
+        String countSql = "SELECT COUNT(*) " + fromSql;
+        params
+                .addValue("limit", pageable.getPageSize())
+                .addValue("offset", pageable.getOffset());
         Long total = jdbc.queryForObject(countSql, params, Long.class);
 
-        params
-                .addValue("limit", pageSize)
-                .addValue("offset", pageNumber * pageSize);
-
-        selectSql += " LIMIT :limit OFFSET :offset";
-
+        String selectSql = getSelectSql(fromSql);
         List<Post> posts = jdbc.query(selectSql, params, postRowMapper);
 
-        return new PageImpl<>(posts, PageRequest.of(pageNumber, pageSize), total == null ? 0 : total);
+        return new PageImpl<>(posts, pageable, total == null ? 0 : total);
+    }
+
+    // language=SQL
+    private String getSelectSql(String fromSql) {
+        return """
+                SELECT
+                    posts.id,
+                    posts.title,
+                    posts.text,
+                    posts.likes_count,
+                    posts.comments_count,
+                    COALESCE(
+                        (
+                            SELECT array_agg(t.name)
+                            FROM post_tags pt
+                            JOIN tags t ON pt.tag_id = t.id
+                            WHERE pt.post_id = posts.id
+                        ),
+                        '{}'::text[]
+                    ) AS tags
+                """ + fromSql + """
+                ORDER BY posts.id DESC
+                LIMIT :limit OFFSET :offset
+                """;
     }
 
     private List<String> getTagsForPost(Long postId) {
@@ -211,8 +234,10 @@ public class PostRepositoryJdbc implements PostRepository {
     @Override
     public void uploadImage(Image image) {
         String sql = """
-                INSERT INTO images (post_id, data) VALUES (:postId, :data)
-                ON CONFLICT (post_id) DO UPDATE SET data = EXCLUDED.data
+                INSERT INTO images (post_id, data)
+                SELECT :postId, :data
+                WHERE EXISTS (SELECT 1 FROM posts WHERE id = :postId)
+                ON CONFLICT (post_id) DO UPDATE SET data = EXCLUDED.data;
                 """;
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("postId", image.postId())

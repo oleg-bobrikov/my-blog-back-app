@@ -52,6 +52,7 @@ public class AppDataSourceConfiguration {
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("schema.sql"));
+        populator.setSeparator(";;");
         populator.execute(dataSource);
     }
 }

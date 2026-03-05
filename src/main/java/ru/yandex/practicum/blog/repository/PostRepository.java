@@ -1,6 +1,7 @@
 package ru.yandex.practicum.blog.repository;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.yandex.practicum.blog.model.Comment;
 import ru.yandex.practicum.blog.model.Image;
 import ru.yandex.practicum.blog.model.Post;
@@ -11,7 +12,7 @@ import java.util.Optional;
 public interface PostRepository {
     Post save(Post post);
 
-    void update(Post post);
+    Post update(Post post);
 
     void deleteById(Long id);
 
@@ -19,7 +20,7 @@ public interface PostRepository {
 
     Post like(Long postId);
 
-    Page<Post> findPosts(String search, int pageNumber, int pageSize);
+    Page<Post> findPosts(String search, Pageable pageable);
 
     void uploadImage(Image image);
 

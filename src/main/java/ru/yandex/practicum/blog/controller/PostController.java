@@ -53,13 +53,17 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public Post get(@PathVariable Long id) {
-        return service.findById(id);
+    public ResponseEntity<Post> get(@PathVariable Long id) {
+        Post post = service.findById(id);
+        if (post == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(post);
     }
 
     @PutMapping("/{id}")
-    public void update(@PathVariable @SuppressWarnings("unused") Long id, @RequestBody Post post) {
-        service.update(post);
+    public Post update(@PathVariable @SuppressWarnings("unused") Long id, @RequestBody Post post) {
+        return service.update(post);
     }
 
     @DeleteMapping("/{id}")
@@ -68,8 +72,12 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/likes")
-    public Post like(@PathVariable Long postId) {
-        return service.like(postId);
+    public ResponseEntity<Post> like(@PathVariable Long postId) {
+        Post post = service.like(postId);
+        if (post == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(post);
     }
 
     @PutMapping("/{postId}/image")
