@@ -71,7 +71,7 @@ public class PostRepositoryJdbc implements PostRepository {
             saveTags(generatedId, post.tags());
         }
 
-        return findById(generatedId);
+        return findById(generatedId).orElse(null);
     }
 
     private void saveTags(Long postId, List<String> tags) {
@@ -112,7 +112,7 @@ public class PostRepositoryJdbc implements PostRepository {
             saveTags(post.id(), post.tags());
         }
 
-        return findById(post.id());
+        return findById(post.id()).orElse(null);
     }
 
     @Override
@@ -122,30 +122,30 @@ public class PostRepositoryJdbc implements PostRepository {
     }
 
     @Override
-    public Post findById(Long id) {
+    public Optional<Post> findById(Long id) {
         String sql = "SELECT * FROM posts WHERE id = :id";
         List<Post> posts = jdbc.query(sql, new MapSqlParameterSource("id", id), postRowMapper);
 
         if (posts.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
         Post post = posts.getFirst();
-        return Post.builder()
+        return Optional.of(Post.builder()
                 .id(post.id())
                 .title(post.title())
                 .text(post.text())
                 .tags(getTagsForPost(post.id()))
                 .likesCount(post.likesCount())
                 .commentsCount(post.commentsCount())
-                .build();
+                .build());
     }
 
     @Override
     public Post like(Long postId) {
         String sql = "UPDATE posts SET likes_count = likes_count + 1 WHERE id = :postId";
         jdbc.update(sql, new MapSqlParameterSource("postId", postId));
-        return findById(postId);
+        return findById(postId).orElse(null);
     }
 
     @Override
@@ -258,7 +258,7 @@ public class PostRepositoryJdbc implements PostRepository {
 
     @Override
     public Optional<Comment> comment(Long postId, Comment comment) {
-        if (findById(postId) == null) {
+        if (findById(postId).isEmpty()) {
             return Optional.empty();
         }
 
@@ -319,14 +319,5 @@ public class PostRepositoryJdbc implements PostRepository {
     public List<Comment> findCommentsByPostId(Long postId) {
         String sql = "SELECT * FROM comments WHERE post_id = :postId";
         return jdbc.query(sql, new MapSqlParameterSource("postId", postId), commentRowMapper);
-    }
-
-    @Override
-    public void deleteAll() {
-        jdbc.getJdbcOperations().execute("DELETE FROM post_tags");
-        jdbc.getJdbcOperations().execute("DELETE FROM comments");
-        jdbc.getJdbcOperations().execute("DELETE FROM images");
-        jdbc.getJdbcOperations().execute("DELETE FROM posts");
-        jdbc.getJdbcOperations().execute("DELETE FROM tags");
     }
 }

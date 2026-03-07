@@ -45,7 +45,7 @@ public class PostService {
                 .build();
     }
 
-    public Post findById(Long id) {
+    public Optional<Post> findById(Long id) {
         return repository.findById(id);
     }
 
@@ -87,9 +87,5 @@ public class PostService {
 
     public void deleteComment(Comment comment) {
         repository.deleteComment(comment);
-    }
-
-    public void deleteAll() {
-        repository.deleteAll();
     }
 }

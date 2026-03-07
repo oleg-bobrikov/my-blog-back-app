@@ -16,7 +16,7 @@ public interface PostRepository {
 
     void deleteById(Long id);
 
-    Post findById(Long id);
+    Optional<Post> findById(Long id);
 
     Post like(Long postId);
 
@@ -35,6 +35,4 @@ public interface PostRepository {
     void deleteComment(Comment comment);
 
     List<Comment> findCommentsByPostId(Long postId);
-
-    void deleteAll();
 }

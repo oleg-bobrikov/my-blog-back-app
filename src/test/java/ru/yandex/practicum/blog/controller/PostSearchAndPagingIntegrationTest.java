@@ -10,6 +10,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.yandex.practicum.blog.configuration.AppDataSourceConfiguration;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @WebAppConfiguration
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
 public class PostSearchAndPagingIntegrationTest {
 
     @Autowired
@@ -52,7 +54,6 @@ public class PostSearchAndPagingIntegrationTest {
     @BeforeAll
     void setup() throws Exception {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        postService.deleteAll();
 
         mockMvc.perform(post("/api/posts")
                         .contentType(MediaType.APPLICATION_JSON)
