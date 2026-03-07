@@ -9,7 +9,7 @@
 #################################################################################
 version: "1.0"
 
-#Specify inspection profile for code analysis
+#Specify the inspection profile for code analysis
 profile:
   name: qodana.starter
 
@@ -35,7 +35,7 @@ projectJDK: "21" #(Applied in CI/CD pipeline)
 # Quality gate. Will fail the CI/CD pipeline if any condition is not met
 # severityThresholds - configures maximum thresholds for different problem severities
 # testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
-# Code Coverage is available in Ultimate and Ultimate Plus plans
+#  Coverage is available in Ultimate and Ultimate Plus plans
 #failureConditions:
 #  severityThresholds:
 #    any: 15
