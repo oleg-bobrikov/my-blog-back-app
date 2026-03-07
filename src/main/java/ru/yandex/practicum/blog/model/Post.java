@@ -1,0 +1,21 @@
+package ru.yandex.practicum.blog.model;
+
+import lombok.Builder;
+import lombok.extern.jackson.Jacksonized;
+
+import java.util.List;
+
+@Builder
+@Jacksonized
+public record Post(
+        Long id,
+        String title,
+        String text,
+        List<String> tags,
+        int likesCount,
+        int commentsCount
+) {
+    public Post {
+        tags = tags == null ? List.of() : List.copyOf(tags);
+    }
+}
