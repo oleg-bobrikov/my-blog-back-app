@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.blog.configuration.AppDataSourceConfiguration;
@@ -16,7 +15,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestPropertySource("classpath:application-test.properties")
 @SpringJUnitConfig(classes = {AppDataSourceConfiguration.class, ru.yandex.practicum.blog.repository.impl.PostRepositoryJdbc.class})
 @Transactional
 public class PostRepositoryJdbcTest {

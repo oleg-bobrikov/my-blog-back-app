@@ -17,7 +17,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestPropertySource("classpath:application-test.properties")
 @SpringJUnitConfig(classes = {AppDataSourceConfiguration.class, PostRepositoryJdbc.class, PostService.class})
 @Transactional
 public class PostServiceIntegrationTest {
