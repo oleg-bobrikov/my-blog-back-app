@@ -17,7 +17,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.sql.Array;
-import java.sql.SQLException;
 import java.util.*;
 
 @Repository
@@ -31,13 +30,11 @@ public class PostRepositoryJdbc implements PostRepository {
                 .likesCount(rs.getInt("likes_count"))
                 .commentsCount(rs.getInt("comments_count"));
 
-        try {
-            Array tagsArray = rs.getArray("tags");
-            if (tagsArray != null) {
-                builder.tags(Arrays.asList((String[]) tagsArray.getArray()));
-            }
-        } catch (SQLException ignored) {
+        Array tagsArray = rs.getArray("tags");
+        if (tagsArray != null) {
+            builder.tags(Arrays.asList((String[]) tagsArray.getArray()));
         }
+
         return builder.build();
     };
     private final RowMapper<Image> imageRowMapper = (rs, rowNum) -> new Image(
@@ -123,7 +120,7 @@ public class PostRepositoryJdbc implements PostRepository {
 
     @Override
     public Optional<Post> findById(Long id) {
-        String sql = "SELECT * FROM posts WHERE id = :id";
+        String sql = "SELECT *, NULL AS tags FROM posts WHERE id = :id";
         List<Post> posts = jdbc.query(sql, new MapSqlParameterSource("id", id), postRowMapper);
 
         if (posts.isEmpty()) {
