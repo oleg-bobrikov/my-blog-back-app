@@ -66,7 +66,7 @@ Database (PostgreSQL / H2)
 
 * JUnit 5
 * Spring Test
-* Mockito (опционально)
+* Mockito
 * MockMvc
 
 ## DevOps
@@ -102,12 +102,12 @@ my-blog-back-app/
 │   │   └── webapp/WEB-INF/
 │   │       └── web.xml
 │   │
-│   └── test/java/com/example/blog/
+│   └── test/java/ru/yandex/practicum/blog/
 │       ├── controller/
 │       ├── service/
-│       └── dao/
+│       └── repository/
 │
-├── pom.xml / build.gradle
+├── pom.xml
 └── README.md
 ```
 
@@ -176,6 +176,7 @@ title
 text
 tags
 likesCount
+commentsCount
 ```
 
 ### Comment
@@ -195,7 +196,8 @@ CREATE TABLE posts (
     id BIGSERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     text TEXT NOT NULL,
-    likes_count INT DEFAULT 0
+    likes_count INT DEFAULT 0,
+    comments_count INT DEFAULT 0
 );
 
 CREATE TABLE comments (
@@ -211,7 +213,13 @@ CREATE TABLE tags (
 
 CREATE TABLE post_tags (
     post_id BIGINT REFERENCES posts(id) ON DELETE CASCADE,
-    tag_id BIGINT REFERENCES tags(id) ON DELETE CASCADE
+    tag_id BIGINT REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (post_id, tag_id)
+);
+
+CREATE TABLE images (
+    post_id BIGINT PRIMARY KEY REFERENCES posts(id) ON DELETE CASCADE,
+    data BYTEA NOT NULL
 );
 ```
 
@@ -291,7 +299,7 @@ mvn test
 
 # 📡 REST API
 
-## Получение постов
+## Получение списка постов
 
 ```
 GET /api/posts?search=text&pageNumber=1&pageSize=5
@@ -306,6 +314,14 @@ GET /api/posts?search=text&pageNumber=1&pageSize=5
   "hasNext": true,
   "lastPage": 5
 }
+```
+
+---
+
+## Получение поста по ID
+
+```
+GET /api/posts/{id}
 ```
 
 ---
@@ -326,10 +342,35 @@ POST /api/posts
 
 ---
 
+## Обновление поста
+
+```
+PUT /api/posts/{id}
+```
+
+---
+
+## Удаление поста
+
+```
+DELETE /api/posts/{id}
+```
+
+---
+
 ## Лайк поста
 
 ```
 POST /api/posts/{id}/likes
+```
+
+---
+
+## Изображения
+
+```
+GET /api/posts/{id}/image
+PUT /api/posts/{id}/image (multipart/form-data)
 ```
 
 ---
@@ -339,6 +380,7 @@ POST /api/posts/{id}/likes
 ```
 GET     /api/posts/{id}/comments
 POST    /api/posts/{id}/comments
+GET     /api/posts/{id}/comments/{commentId}
 PUT     /api/posts/{id}/comments/{commentId}
 DELETE  /api/posts/{id}/comments/{commentId}
 ```
