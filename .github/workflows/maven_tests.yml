@@ -1,4 +1,4 @@
-name: Java Tests
+name: Java CI – Unit & Integration Tests
 
 on:
   push:
