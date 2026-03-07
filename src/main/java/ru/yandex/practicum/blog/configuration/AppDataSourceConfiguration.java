@@ -15,6 +15,8 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 @Configuration
 @PropertySource("classpath:application.properties")
@@ -53,9 +55,16 @@ public class AppDataSourceConfiguration {
     public void populate(ContextRefreshedEvent event) {
         DataSource dataSource = event.getApplicationContext().getBean(DataSource.class);
 
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("schema.sql"));
-        populator.setSeparator(";;");
-        populator.execute(dataSource);
+        try (Connection connection = dataSource.getConnection()) {
+            String dbName = connection.getMetaData().getDatabaseProductName();
+            if ("H2".equalsIgnoreCase(dbName)) {
+                ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+                populator.addScript(new ClassPathResource("schema.sql"));
+                populator.setSeparator(";;");
+                populator.execute(dataSource);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to check database type", e);
+        }
     }
 }
