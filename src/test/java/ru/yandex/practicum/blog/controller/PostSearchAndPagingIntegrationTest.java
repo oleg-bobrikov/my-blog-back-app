@@ -1,7 +1,7 @@
 package ru.yandex.practicum.blog.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class PostSearchAndPagingIntegrationTest {
     private static final String TAG_SPRING = "Spring";
     private static final String TEXT_DEFAULT = "Test Text";
 
-    @BeforeAll
+    @BeforeEach
     void setup() throws Exception {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 
