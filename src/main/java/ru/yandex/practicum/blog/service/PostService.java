@@ -88,4 +88,8 @@ public class PostService {
     public void deleteComment(Comment comment) {
         repository.deleteComment(comment);
     }
+
+    public void deleteAll() {
+        repository.deleteAll();
+    }
 }

@@ -214,15 +214,7 @@ public class PostRepositoryJdbc implements PostRepository {
                     posts.text,
                     posts.likes_count,
                     posts.comments_count,
-                    COALESCE(
-                        (
-                            SELECT array_agg(t.name)
-                            FROM post_tags pt
-                            JOIN tags t ON pt.tag_id = t.id
-                            WHERE pt.post_id = posts.id
-                        ),
-                        '{}'::text[]
-                    ) AS tags
+                    NULL AS tags
                 """ + fromSql + """
                 ORDER BY posts.id DESC
                 LIMIT :limit OFFSET :offset
@@ -240,16 +232,20 @@ public class PostRepositoryJdbc implements PostRepository {
 
     @Override
     public void uploadImage(Image image) {
-        String sql = """
-                INSERT INTO images (post_id, data)
-                SELECT :postId, :data
-                WHERE EXISTS (SELECT 1 FROM posts WHERE id = :postId)
-                ON CONFLICT (post_id) DO UPDATE SET data = EXCLUDED.data;
-                """;
+        String checkSql = "SELECT 1 FROM images WHERE post_id = :postId";
+        List<Integer> exists = jdbc.queryForList(checkSql, new MapSqlParameterSource("postId", image.postId()), Integer.class);
+
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("postId", image.postId())
                 .addValue("data", image.data());
-        jdbc.update(sql, params);
+
+        if (exists.isEmpty()) {
+            String insertSql = "INSERT INTO images (post_id, data) VALUES (:postId, :data)";
+            jdbc.update(insertSql, params);
+        } else {
+            String updateSql = "UPDATE images SET data = :data WHERE post_id = :postId";
+            jdbc.update(updateSql, params);
+        }
     }
 
     @Override
@@ -323,5 +319,14 @@ public class PostRepositoryJdbc implements PostRepository {
     public List<Comment> findCommentsByPostId(Long postId) {
         String sql = "SELECT * FROM comments WHERE post_id = :postId";
         return jdbc.query(sql, new MapSqlParameterSource("postId", postId), commentRowMapper);
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbc.getJdbcOperations().execute("DELETE FROM post_tags");
+        jdbc.getJdbcOperations().execute("DELETE FROM comments");
+        jdbc.getJdbcOperations().execute("DELETE FROM images");
+        jdbc.getJdbcOperations().execute("DELETE FROM posts");
+        jdbc.getJdbcOperations().execute("DELETE FROM tags");
     }
 }

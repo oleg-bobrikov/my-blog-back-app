@@ -35,4 +35,6 @@ public interface PostRepository {
     void deleteComment(Comment comment);
 
     List<Comment> findCommentsByPostId(Long postId);
+
+    void deleteAll();
 }
