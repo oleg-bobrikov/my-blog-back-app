@@ -16,7 +16,6 @@ import org.springframework.web.context.WebApplicationContext;
 import ru.yandex.practicum.blog.configuration.AppDataSourceConfiguration;
 import ru.yandex.practicum.blog.configuration.WebConfiguration;
 import ru.yandex.practicum.blog.model.Post;
-import ru.yandex.practicum.blog.service.PostService;
 
 import java.util.List;
 
@@ -37,9 +36,6 @@ public class PostSearchAndPagingIntegrationTest {
 
     @Autowired
     private WebApplicationContext wac;
-
-    @Autowired
-    private PostService postService;
 
     private MockMvc mockMvc;
 
