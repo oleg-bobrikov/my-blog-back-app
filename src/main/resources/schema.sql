@@ -34,23 +34,3 @@ CREATE TABLE IF NOT EXISTS images
     post_id BIGINT PRIMARY KEY REFERENCES posts (id) ON DELETE CASCADE,
     data    BYTEA NOT NULL
 );;
-
-CREATE OR REPLACE FUNCTION delete_unused_tags()
-    RETURNS TRIGGER AS $$
-BEGIN
-    DELETE FROM tags
-    WHERE id = OLD.tag_id
-      AND NOT EXISTS (
-          SELECT 1
-          FROM post_tags
-          WHERE tag_id = OLD.tag_id
-      );
-
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;;
-
-CREATE OR REPLACE TRIGGER trigger_delete_unused_tags
-    AFTER DELETE ON post_tags
-    FOR EACH ROW
-EXECUTE FUNCTION delete_unused_tags();;

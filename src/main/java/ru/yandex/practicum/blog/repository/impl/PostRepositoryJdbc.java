@@ -75,17 +75,24 @@ public class PostRepositoryJdbc implements PostRepository {
     }
 
     private void saveTags(Long postId, List<String> tags) {
-        String insertTagSql = "INSERT INTO tags (name) VALUES (:name) ON CONFLICT (name) DO NOTHING";
-        String insertPostTagSql = """
-                INSERT INTO post_tags (post_id, tag_id)
-                SELECT :postId, id FROM tags WHERE name = :name
-                """;
+        String selectTagSql = "SELECT id FROM tags WHERE name = :name";
+        String insertTagSql = "INSERT INTO tags (name) VALUES (:name)";
+        String insertPostTagSql = "INSERT INTO post_tags (post_id, tag_id) VALUES (:postId, :tagId)";
 
         for (String tag : tags) {
-            jdbc.update(insertTagSql, new MapSqlParameterSource("name", tag));
+            List<Long> tagIds = jdbc.queryForList(selectTagSql, new MapSqlParameterSource("name", tag), Long.class);
+            Long tagId;
+            if (tagIds.isEmpty()) {
+                KeyHolder keyHolder = new GeneratedKeyHolder();
+                jdbc.update(insertTagSql, new MapSqlParameterSource("name", tag), keyHolder, new String[]{"id"});
+                tagId = Objects.requireNonNull(keyHolder.getKey()).longValue();
+            } else {
+                tagId = tagIds.getFirst();
+            }
+
             jdbc.update(insertPostTagSql, new MapSqlParameterSource()
                     .addValue("postId", postId)
-                    .addValue("name", tag));
+                    .addValue("tagId", tagId));
         }
     }
 
@@ -169,7 +176,7 @@ public class PostRepositoryJdbc implements PostRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
 
         if (!titleSearch.isBlank()) {
-            fromSql += " AND posts.title ILIKE :title";
+            fromSql += " AND LOWER(posts.title) LIKE LOWER(:title)";
             params.addValue("title", "%" + titleSearch + "%");
         }
 
