@@ -70,3 +70,14 @@ tasks.named<Test>("test") {
 tasks.named("check") {
     dependsOn(fullIntegrationTest)
 }
+
+val testReport = tasks.register<TestReport>("testReport") {
+    group = "verification"
+    description = "Generates a combined test report."
+    destinationDirectory.set(layout.buildDirectory.dir("reports/all-tests"))
+    testResults.from(tasks.named<Test>("test"), fullIntegrationTest)
+}
+
+tasks.withType<Test> {
+    finalizedBy(testReport)
+}
