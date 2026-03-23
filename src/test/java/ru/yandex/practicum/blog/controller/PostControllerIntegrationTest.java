@@ -1,18 +1,13 @@
 package ru.yandex.practicum.blog.controller;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import ru.yandex.practicum.blog.configuration.AppDataSourceConfiguration;
-import ru.yandex.practicum.blog.configuration.WebConfiguration;
 import ru.yandex.practicum.blog.model.Comment;
 import ru.yandex.practicum.blog.model.Post;
 import org.springframework.test.web.servlet.MvcResult;
@@ -25,30 +20,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringJUnitConfig(classes = {
-        AppDataSourceConfiguration.class,
-        WebConfiguration.class,
-})
-@WebAppConfiguration
+
+@SpringBootTest
+@AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional
 public class PostControllerIntegrationTest {
 
     @Autowired
-    private WebApplicationContext wac;
-
     private MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private static final String TITLE_DEFAULT = "Test Title";
     private static final String TEXT_DEFAULT = "Test Text";
     private static final String TAG_DEFAULT = "Tag";
 
-    @BeforeAll
-    void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-    }
 
     @Test
     void shouldCreatePost() throws Exception {
@@ -272,6 +260,32 @@ public class PostControllerIntegrationTest {
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/posts/{postId}/comments/{commentId}", postId, commentId))
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    void shouldReturn404WhenPostNotFound() throws Exception {
+        mockMvc.perform(get("/api/posts/{id}", 9999))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldReturn404WhenLikingNonExistentPost() throws Exception {
+        mockMvc.perform(post("/api/posts/{id}/likes", 9999))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldReturn404WhenCommentingOnNonExistentPost() throws Exception {
+        Comment comment = Comment.builder().text("text").build();
+        mockMvc.perform(post("/api/posts/{id}/comments", 9999)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(comment)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldReturn404WhenImageNotFound() throws Exception {
+        mockMvc.perform(get("/api/posts/{id}/image", 9999))
                 .andExpect(status().isNotFound());
     }
 }

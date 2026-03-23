@@ -2,22 +2,18 @@ package ru.yandex.practicum.blog.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import ru.yandex.practicum.blog.configuration.AppDataSourceConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.blog.model.Post;
-import ru.yandex.practicum.blog.repository.impl.PostRepositoryJdbc;
-
-import java.util.Optional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = {AppDataSourceConfiguration.class, PostRepositoryJdbc.class, PostService.class})
+@SpringBootTest
 @Transactional
 public class PostServiceIntegrationTest {
 
@@ -122,7 +118,7 @@ public class PostServiceIntegrationTest {
         ru.yandex.practicum.blog.model.Comment comment = ru.yandex.practicum.blog.model.Comment.builder().text(commentText).build();
 
         // Create comment
-        java.util.Optional<ru.yandex.practicum.blog.model.Comment> commentResult = service.comment(postId, comment);
+        Optional<ru.yandex.practicum.blog.model.Comment> commentResult = service.comment(postId, comment);
         org.junit.jupiter.api.Assertions.assertTrue(commentResult.isPresent());
         Long commentId = commentResult.get().id();
         org.junit.jupiter.api.Assertions.assertNotNull(commentId);
@@ -135,20 +131,46 @@ public class PostServiceIntegrationTest {
 
         // Get comment by id
         ru.yandex.practicum.blog.model.Comment searchComment = ru.yandex.practicum.blog.model.Comment.builder().id(commentId).postId(postId).build();
-        java.util.Optional<ru.yandex.practicum.blog.model.Comment> foundResult = service.findComment(searchComment);
+        Optional<ru.yandex.practicum.blog.model.Comment> foundResult = service.findComment(searchComment);
         org.junit.jupiter.api.Assertions.assertTrue(foundResult.isPresent());
         assertEquals(commentText, foundResult.get().text());
 
         // Update comment
         String updatedText = "Updated comment text";
         ru.yandex.practicum.blog.model.Comment updateComment = ru.yandex.practicum.blog.model.Comment.builder().id(commentId).postId(postId).text(updatedText).build();
-        java.util.Optional<ru.yandex.practicum.blog.model.Comment> updateResult = service.updateComment(updateComment);
+        Optional<ru.yandex.practicum.blog.model.Comment> updateResult = service.updateComment(updateComment);
         org.junit.jupiter.api.Assertions.assertTrue(updateResult.isPresent());
         assertEquals(updatedText, updateResult.get().text());
 
         // Delete comment
         service.deleteComment(updateComment);
-        java.util.Optional<ru.yandex.practicum.blog.model.Comment> afterDelete = service.findComment(updateComment);
+        Optional<ru.yandex.practicum.blog.model.Comment> afterDelete = service.findComment(updateComment);
         org.junit.jupiter.api.Assertions.assertFalse(afterDelete.isPresent());
+    }
+
+    @Test
+    void shouldHandleLikes() {
+        Post post = service.save(Post.builder().title("Title").text("Text").build());
+        assertEquals(0, post.likesCount());
+
+        Post liked = service.like(post.id());
+        assertEquals(1, liked.likesCount());
+
+        Optional<Post> found = service.findById(post.id());
+        assertTrue(found.isPresent());
+        assertEquals(1, found.get().likesCount());
+    }
+
+    @Test
+    void shouldUploadAndGetImage() {
+        Post post = service.save(Post.builder().title("Title").text("Text").build());
+        byte[] imageData = new byte[]{1, 2, 3, 4};
+        ru.yandex.practicum.blog.model.Image image = new ru.yandex.practicum.blog.model.Image(post.id(), imageData);
+
+        service.uploadImage(image);
+
+        Optional<ru.yandex.practicum.blog.model.Image> foundImage = service.findImageByPostId(post.id());
+        assertTrue(foundImage.isPresent());
+        assertArrayEquals(imageData, foundImage.get().data());
     }
 }
