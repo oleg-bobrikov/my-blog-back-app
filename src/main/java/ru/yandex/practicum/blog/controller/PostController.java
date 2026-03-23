@@ -1,6 +1,8 @@
 package ru.yandex.practicum.blog.controller;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +13,8 @@ import ru.yandex.practicum.blog.model.Comment;
 import ru.yandex.practicum.blog.model.Image;
 import ru.yandex.practicum.blog.model.Post;
 import ru.yandex.practicum.blog.service.PostService;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 import java.io.IOException;
 import java.util.List;
 

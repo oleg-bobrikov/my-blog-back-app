@@ -1,4 +1,4 @@
-name: Java CI – Unit & Integration Tests
+name: Java CI – Unit & Integration Tests (Gradle)
 
 on:
   push:
@@ -23,15 +23,18 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-          cache: maven
+          cache: gradle
 
-      - name: Run tests
-        run: mvn -B clean test
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Run tests with Gradle
+        run: ./gradlew test
 
       - name: Publish Test Results
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Maven Tests
-          path: target/surefire-reports/*.xml
+          name: Gradle Tests
+          path: build/test-results/test/*.xml
           reporter: java-junit

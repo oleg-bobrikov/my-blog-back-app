@@ -1,26 +1,29 @@
-package ru.yandex.practicum.blog.repository;
+package ru.yandex.practicum.blog.repository.impl;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.blog.configuration.AppDataSourceConfiguration;
 import ru.yandex.practicum.blog.model.Comment;
 import ru.yandex.practicum.blog.model.Post;
+import ru.yandex.practicum.blog.repository.PostRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(classes = {AppDataSourceConfiguration.class, ru.yandex.practicum.blog.repository.impl.PostRepositoryJdbc.class})
+@DataJdbcTest
 @Transactional
+@Import({PostRepositoryJdbc.class})
 public class PostRepositoryJdbcTest {
 
     @Autowired
     private PostRepository repository;
+
 
     @Test
     void shouldSaveAndFindPost() {
